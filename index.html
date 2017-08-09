@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport content=' width-device-width, initial scale=1 '>
+   <title>js contacts</title>
+   <script src='https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.min.js'></script>
+   <script src='https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.min.js'></script>
+   <script src='https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js'></script>
+   <script src='https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js'></script>
+  <link rel='stylesheet' href='css/contactlist.css'/> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div id='contactlist'></div>
+<script type='text/babel'>
+const url=apiurl=>'https://internal-api-staging-lb.interact.io/v2/contacts?offset=0'
+        var ContactSegment = React.createClass({
+             render : function (){
+                        return (
+                            <li className='list-group-item '>
+                                 {this.props.children}
+                                <div className='clearfix '></div>
+                           </li>
+                        );
+                    }
+                });
+
+
+        class ContactsList extends React.Component {
+            constructor(props) {
+                    super(props);
+                    this.state = {contacts: []};
+                } 
+          componentDidMount(){
+     fetch('https://internal-api-staging-lb.interact.io/v2/contacts?offset=0', {
+      method: "GET", 
+      headers:  {
+                       'Accept':'application/json','authToken':'kss_0vUWK5ag5q5tuPmUe3Nbt6','Connection':'keep-alive',
+                       'Access-Control-Allow-Origin':'*','Content-Type':'application/json'
+                     } 
+    }).then(response=> { 
+			 return response.json();
+    }).then(json=>{ 
+         console.log(json.data)
+       			this.setState({contacts: json.data}); 
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
+             
+        }   
+            render (){
+
+                 function Emails({ emails }) {
+                    const isNull = !emails;
+                    const isEmpty = !isNull && !emails.length;
+                    return (
+                        <div>
+                            { isNull
+                                ? <span>no email</span>
+                                : ( isEmpty
+                                    ? <span>no email</span>
+                                    : <div>{emails.filter((email, i) => (i < 1)).map(function(email,i){
+                                        return(<span>{email.email}</span> ) })}</div>
+                                )
+                            }
+                        </div>
+                    );
+                }
+ function  PhoneNumbers({ phoneNumbers }) {
+                    const isNull = !phoneNumbers;
+                    const isEmpty = !isNull && !phoneNumbers.length;
+                    return (
+                        <div>
+                            { isNull
+                                ? <span>no phone number</span>
+                                : ( isEmpty
+                                    ? <span>no phone number</span>
+                                    : <div>{phoneNumbers.filter((number, i) => (i < 1)).map(function(number,i){
+                                        return(<span>{number.number}</span> ) })}</div>
+                                )
+                            }
+                        </div>
+                    );
+                }
+function ProfilePicture({profilePicture}){
+            return(
+                !profilePicture
+                ? <img src='https://techreport.com/forums/styles/canvas/theme/images/no_avatar.jpg' alt="No Avatar" className='img-responsive img-circle ' />
+                : <img src={profilePicture}  className='img-responsive img-circle ' />
+            )
+}
+function ContactType({contactType}){
+           if(contactType=='COMPANY'){
+              return(<span className='pull-right glyphicons glyphicon-user'></span>)
+              }else if(contactType=='PERSON'){
+                 return(<span className='pull-right glyphicon glyphicon-user'></span>)
+             }
+}
+                return ( 
+                    <div className='container'>
+                       <div className='row'>
+                           <div className='col-xs-12 col-sm-offset-3 col-sm-6'>
+                               <div className='panel panel-default'>
+                                         <div className='panel-heading c-list'>
+                                            <span className='title'>Contacts</span>
+                                        </div>
+                                     <ul className='list-group' id='contact-list'>
+                                       {
+                                                this.state.contacts.map(function(contact,i){
+                                                    return( <ContactSegment key={contact.id}>
+                                                        <div className='col-xs-12 col-sm-3 '>  
+                                                          <ProfilePicture profilePicture={contact.profilePicture} />  
+                                                       </div>
+                                                       <div className='col-xs-12 col-sm-9 '>
+                                                           <ContactType contactType={contact.contactType}/>
+                                                         <span  className='name'>{contact.displayName}</span><br/>
+                                                             <span> <PhoneNumbers phoneNumbers={contact.phoneNumbers} /> </span>
+                                                             <span> <Emails emails={contact.emails} /> </span> 
+                                                        </div>
+                                                            </ContactSegment>)
+                                                })
+                                       }
+                                        <li  className='list-group-item '><button className='btn btn-default'>load more</button></li>
+                                    </ul>
+                                </div> 
+                             </div> 
+                         </div>  
+                   </div>  
+                       );
+            }
+        };
+       
+  ReactDOM.render( <ContactsList />, document.getElementById('contactlist'));
+</script>
+</body>
+</html>
