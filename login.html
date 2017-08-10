@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport content=' width-device-width, initial scale=1 '>
+   <title>Loin</title> 
+     <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'> 
+    <link href='css/bootstrap/bootstrap.icon-large.min.css' rel='stylesheet'>
+</head>
+<body>
+<div class='col-md-12'>
+    <div class='modal-dialog' style='margin-bottom:0'>
+        <div class='panel panel-default'>
+                    <div class='panel-heading'>
+                        <h3 class='panel-title'>Sign In</h3>
+                    </div>
+                    <div class='panel-body'>
+                            <div id='loginForm'>
+                    </div>
+                </div>
+    </div>
+</div>
+<script type='text/babel'>
+class LoginForm extends React.Component {
+            constructor(props) {
+                       super(props);
+                        this.state =  {username: '',password:'',
+                        formErrors: {email: '', password: ''},
+                        usernameValid: false,
+                        passwordValid: false }; 
+                       this.handleSubmit = this.handleSubmit.bind(this);
+                       this.handleUsernameChange = this.handleUsernameChange.bind(this);
+                       this.handlePasswordChange = this.handlePasswordChange.bind(this);
+                 }  
+handleUsernameChange(event) {
+     this.setState({username: event.target.value});  
+     if(event.target.value !=='' &&
+     event.target.value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i) !=null){
+          this.setState({usernameValid:true});
+     }
+     else{
+          this.setState({usernameValid:false});
+     }
+   }    
+ handlePasswordChange(event) {
+    this.setState({password: event.target.value});
+         if(event.target.value != ''){
+          this.setState({passwordValid:true});
+     }
+     else{
+          this.setState({passwordValid:false});
+     }
+  }    
+  handleSubmit(event) {
+      if(this.state.usernameValid == true && this.state.passwordValid == true){
+      var requestBody = {   username: this.state.username,
+                            password: this.state.password,
+                            client: "Contacts"
+                                            } ;
+     fetch('https://internal-api-staging-lb.interact.io/v2/login/', {
+                        method: 'POST',
+                        headers:{
+                                    'Content-Type': 'application/json', 'Access-Control-Allow-Origin':'*',
+                                    'Accept':'application/json'
+                            },
+                        body: JSON.stringify(requestBody) 
+                        }).then(response=> {  
+                                 return response.json();
+                        }).then(json=>{ 
+                             console.log(json)
+                        }).catch(function(ex) {
+                        console.log('failed ', ex)
+                        });
+    event.preventDefault();
+    } 
+  } 
+            render (){ 
+                return(<form onSubmit={this.handleSubmit}>
+                            <fieldset>
+                                <div className='form-group'>
+                                    <input required className='form-control' placeholder='E-mail' name='email'
+                                     type='email' autofocus='' 
+                                    value={this.state.username} onChange={this.handleUsernameChange}/>
+                                </div>
+                                <div className='form-group'>
+                                    <input required className='form-control' placeholder='Password' name='password' type='password'
+                                 value={this.state.password} onChange={this.handlePasswordChange}  />
+                                </div>  
+                               <input type='submit' disabled={!this.state.usernameValid ||!this.state.passwordValid } className='btn btn-sm btn-success pull-right' value='submit'/>
+                            </fieldset>
+                        </form>);
+                 }
+            }
+ ReactDOM.render( <LoginForm />, document.getElementById('loginForm'));
+</script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.min.js'></script>
+   <script src='https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.min.js'></script>
+   <script src='https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js'></script>
+</body>
+</html>
