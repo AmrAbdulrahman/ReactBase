@@ -4,9 +4,9 @@
 <head>
     <meta charset='utf-8'>
     <meta name='viewport content=' width-device-width, initial scale=1 '>
-   <title>js contacts</title> 
-    <link rel='stylesheet' href='css/contactlist.css'/> 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+   <title>js contacts</title>
+    <link rel='stylesheet' href='css/contactlist.css'/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="css/bootstrap/bootstrap.icon-large.min.css" rel="stylesheet">
 </head>
 <body>
@@ -24,21 +24,21 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown" > 
+                <li class="dropdown" >
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                   {User name} <span class="caret"></span></a> 
-                     <ul class="dropdown-menu">  
+                                   {User name} <span class="caret"></span></a>
+                     <ul class="dropdown-menu">
                                     <li id='logoutButton'> </li>
-                                </ul>     
+                                </ul>
                </li>
-                                     
+
             </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 <br/>
 <br/>
-    <div class="container"> 
+    <div class="container">
         <div class="row">
             <div class="col-md-12">
                <div id='contactlist'></div>
@@ -50,7 +50,7 @@
                     constructor(props) {
                             super(props);
                             this.handleLogout = this.handleLogout.bind(this);
-                        }  
+                        }
                     handleLogout(event) {
                                        var requestBody ={authToken:"kss_0vUY1noqOQ4LfAK4TILoal"};
                                        fetch('https://internal-api-staging-lb.interact.io/v2/logout/', {
@@ -59,18 +59,18 @@
                                                     'Content-Type': 'application/json', 'Access-Control-Allow-Origin':'*',
                                                     'Accept':'application/json'
                                             },
-                                        body: JSON.stringify(requestBody)  
-                                        }).then(response=> {  
+                                        body: JSON.stringify(requestBody)
+                                        }).then(response=> {
                                                 console.log(response)
 
                                                 return response.json();
-                                        }).then(json=>{ 
+                                        }).then(json=>{
                                         }).catch(function(ex) {
                                         console.log('failed ', ex)
                                         });
-                                     event.preventDefault(); 
-                        }   
-                    render (){ 
+                                     event.preventDefault();
+                        }
+                    render (){
                                 return (
                                 <a href="#" onClick={this.handleLogout}>Logout</a>
                                 );
@@ -95,27 +95,27 @@
                     this.state = {contacts: [],offset:0};
                     this.handleLoadMore = this.handleLoadMore.bind(this);
                     this.GetContacts = this.GetContacts.bind(this);
-                } 
-                
+                }
+
           componentDidMount(){
                        this.GetContacts();
-                 }   
+                 }
                  handleLoadMore(event) {
-                          this.setState({offset:this.state.offset+1}); 
+                          this.setState({offset:this.state.offset+1});
                           this.GetContacts();
-                    } 
-                     
-                 GetContacts(){ 
+                    }
+
+                 GetContacts(){
                      var requestUrl ='https://internal-api-staging-lb.interact.io/v2/contacts?limit=4&offset='+this.state.offset;
                                  fetch(requestUrl, {
-                        method: "GET", 
+                        method: "GET",
                         headers:  {
                                         'Accept':'application/json','authToken':'kss_0vUY2HMl2vIMMcJF1SzOTH','Connection':'keep-alive',
                                         'Access-Control-Allow-Origin':'*','Content-Type':'application/json'
-                                        } 
-                        }).then(response=> { 
+                                        }
+                        }).then(response=> {
                                 return response.json();
-                        }).then(json=>{    
+                        }).then(json=>{
                                 this.setState( (state) => {
                                             state.contacts = state.contacts.concat(json.data);
                                             return state;
@@ -123,8 +123,8 @@
                         }).catch(function(ex) {
                               console.log('failed', ex)
                         })
-                    } 
-            render (){ 
+                    }
+            render (){
                  function Emails({ emails }) {
                     const isNull = !emails;
                     const isEmpty = !isNull && !emails.length;
@@ -180,14 +180,14 @@
                                        {
                                                 this.state.contacts.map(function(contact,i){
                                                     return( <ContactSegment key={contact.id}>
-                                                        <div className='col-xs-12 col-sm-3 '>  
-                                                          <ProfilePicture profilePicture={contact.profilePicture} />  
+                                                        <div className='col-xs-12 col-sm-3 '>
+                                                          <ProfilePicture profilePicture={contact.profilePicture} />
                                                        </div>
                                                        <div className='col-xs-12 col-sm-9 '>
                                                            <ContactType contactType={contact.contactType}/>
                                                          <span  className='name'>{contact.displayName}</span><br/>
                                                              <span> <PhoneNumbers phoneNumbers={contact.phoneNumbers} /> </span>
-                                                             <span> <Emails emails={contact.emails} /> </span> 
+                                                             <span> <Emails emails={contact.emails} /> </span>
                                                         </div>
                                                             </ContactSegment>)
                                                 })
@@ -195,21 +195,21 @@
                                        <div className='panel-footer c-list'>
                                              <div className='col-md-offset-9'><button className='btn btn-default'  onClick={this.handleLoadMore}>load more</button> </div>
                                         </div>
-                                        
+
                                     </ul>
-                                </div> 
-                             </div> 
-                       
+                                </div>
+                             </div>
+
                        );
             }
         };
 
 
-       
+
   ReactDOM.render( <ContactsList />, document.getElementById('contactlist'));
     ReactDOM.render( <LogoutButton />, document.getElementById('logoutButton'));
 
-  
+
 </script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.min.js'></script>
    <script src='https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.min.js'></script>
